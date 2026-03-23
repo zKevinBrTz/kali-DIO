@@ -97,3 +97,24 @@ Usar autenticação multifator
 Monitorar logs e aplicar alertas de acesso suspeito
 
 Atualizar sistemas e serviços regularmente
+
+# 🛡️ Lab de Cibersegurança: Simulação de Brute Force com Medusa
+
+Este repositório documenta um laboratório prático de **Ethical Hacking** realizado em ambiente controlado. O foco é a simulação de ataques de força bruta contra serviços de rede (FTP e SMB) para análise de vulnerabilidades e implementação de medidas defensivas.
+
+---
+
+## 🏗️ Estrutura do Projeto
+
+```text
+kali-DIO/
+├── medusa-brute-force-lab/
+│   ├── README.md              # Documentação principal
+│   ├── wordlists/             # Dicionários de usuários e senhas (exemplos)
+│   │   ├── users.txt
+│   │   └── passwords.txt
+│   ├── scripts/               # Scripts de automação para Medusa
+│   │   └── medusa-ftp.sh
+│   ├── setup/                 # Notas de configuração de infraestrutura
+│   │   └── virtualbox-config.txt
+│   └── images/                # Evidências e prints dos resultados
