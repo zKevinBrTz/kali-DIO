@@ -1,103 +1,4 @@
-# kali-DIO
-
-/medusa-brute-force-lab
-│
-├── README.md
-├── wordlists/
-│   ├── users.txt
-│   └── passwords.txt
-├── scripts/
-│   └── medusa-ftp.sh
-├── images/
-│   └── (prints de tela)
-└── setup/
-    └── virtualbox-config.txt
-
-
-# 💥 Simulação de Ataques de Força Bruta com Medusa e Kali Linux
-
-Este projeto documenta um laboratório prático de cibersegurança utilizando **VirtualBox**, **Kali Linux** e a ferramenta **Medusa** para simular ataques de força bruta em ambientes vulneráveis. O objetivo é entender como esses ataques funcionam, como detectá-los e como mitigá-los.
-
----
-
-## 🧰 Ferramentas Utilizadas
-
-- **VirtualBox**: para virtualização das máquinas.
-- **Kali Linux**: sistema operacional voltado para testes de segurança.
-- **Metasploitable 2**: máquina vulnerável para simulação.
-- **Medusa**: ferramenta de força bruta rápida e modular.
-
----
-
-## 🖥️ Configuração do Ambiente
-
-### 1. Instalar o VirtualBox
-
-Baixe e instale o [VirtualBox](https://www.virtualbox.org/).
-
-### 2. Importar as VMs
-
-- **Kali Linux**: [Download oficial](https://www.kali.org/get-kali/)
-- **Metasploitable 2**: [Download](https://sourceforge.net/projects/metasploitable/)
-
-Configure ambas com rede **Host-Only Adapter** para comunicação interna.
-
----
-
-## 🔐 Simulando Ataques com Medusa
-
-### 1. Acesso ao Kali Linux
-Abra o terminal e atualize o sistema:
-```bash
-sudo apt update && sudo apt upgrade
-Instale o Medusa:
-
-bash
-sudo apt install medusa
-2. Criar Wordlists
-Crie arquivos com nomes de usuários e senhas comuns:
-
-bash
-echo -e "admin\nuser\ntest" > users.txt
-echo -e "123456\npassword\nadmin" > passwords.txt
-3. Ataque FTP
-bash
-medusa -h 192.168.56.101 -U users.txt -P passwords.txt -M ftp
--h: IP da máquina alvo
-
--U: lista de usuários
-
--P: lista de senhas
-
--M: módulo (ftp, ssh, smb, etc.)
-
-4. Ataque SMB com Enumeração
-bash
-enum4linux -a 192.168.56.101
-Depois:
-
-bash
-medusa -h 192.168.56.101 -U smb_users.txt -P passwords.txt -M smbnt
-🧠 Vulnerabilidades Comuns
-Senhas fracas ou padrão
-
-Serviços expostos sem restrição
-
-Falta de autenticação multifator
-
-Compartilhamentos SMB abertos
-
-🛡️ Medidas de Mitigação
-Implementar políticas de senha forte
-
-Restringir serviços por firewall
-
-Usar autenticação multifator
-
-Monitorar logs e aplicar alertas de acesso suspeito
-
-Atualizar sistemas e serviços regularmente
-
+Markdown
 # 🛡️ Lab de Cibersegurança: Simulação de Brute Force com Medusa
 
 Este repositório documenta um laboratório prático de **Ethical Hacking** realizado em ambiente controlado. O foco é a simulação de ataques de força bruta contra serviços de rede (FTP e SMB) para análise de vulnerabilidades e implementação de medidas defensivas.
@@ -118,3 +19,64 @@ kali-DIO/
 │   ├── setup/                 # Notas de configuração de infraestrutura
 │   │   └── virtualbox-config.txt
 │   └── images/                # Evidências e prints dos resultados
+🧰 Stack Tecnológica
+Virtualização: Oracle VirtualBox.
+
+SO Atacante: Kali Linux (Rolling Edition).
+
+Alvo (Target): Metasploitable 2 (Linux vulnerável por design).
+
+Ferramentas: * Medusa: Brute-force modular de alta velocidade.
+
+Enum4linux: Enumeração de informações em sistemas Windows/Samba.
+
+Nmap: Reconhecimento de portas e serviços.
+
+🖥️ Configuração do Ambiente (Lab Setup)
+Rede: Ambas as máquinas configuradas em modo Host-Only Adapter (Rede Privada) para garantir que o tráfego de ataque não saia para a rede real.
+
+Identificação do Alvo:
+
+Bash
+# Identificando o IP da Metasploitable e serviços abertos
+nmap -sV 192.168.56.101
+🔐 Execução dos Ataques
+1. Preparação de Wordlists
+Criação de listas customizadas baseadas em padrões comuns:
+
+Bash
+echo -e "admin\nuser\nservice\nroot" > wordlists/users.txt
+echo -e "123456\npassword\nadmin\nsuper" > wordlists/passwords.txt
+2. Ataque ao Serviço FTP
+O Medusa testa combinações de credenciais de forma paralela contra o protocolo FTP:
+
+Bash
+medusa -h 192.168.56.101 -U wordlists/users.txt -P wordlists/passwords.txt -M ftp
+3. Enumeração e Ataque SMB
+Antes do brute-force, realizamos a enumeração para descobrir usuários válidos no Samba:
+
+Bash
+# Enumeração de usuários via SMB
+enum4linux -a 192.168.56.101
+
+# Ataque direcionado utilizando o módulo smbnt
+medusa -h 192.168.56.101 -U smb_users.txt -P wordlists/passwords.txt -M smbnt
+🧠 Análise de Vulnerabilidades Encontradas
+Credenciais Fracas: Uso de senhas padrão em serviços críticos.
+
+Ausência de Rate Limiting: O serviço permite tentativas infinitas de login sem bloquear o IP atacante.
+
+Banner Grabbing: O serviço FTP expõe a versão exata do software, facilitando a busca por exploits específicos.
+
+🛡️ Estratégias de Mitigação (Defesa)
+Para proteger ambientes contra as técnicas demonstradas neste lab, recomenda-se:
+
+Políticas de Senha: Implementar complexidade mínima e rotação obrigatória.
+
+Fail2Ban: Configurar ferramentas que monitorem logs e bloqueiem automaticamente IPs com múltiplas falhas de autenticação.
+
+2FA/MFA: Implementar autenticação de dois fatores sempre que possível.
+
+Hardening de Serviços: Desabilitar protocolos legados (como FTP) em favor de alternativas seguras (SFTP/SSH).
+
+Firewall: Restringir o acesso a portas de gerenciamento (21, 22, 445) apenas para IPs conhecidos (Whitelist).
